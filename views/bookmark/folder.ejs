@@ -1,0 +1,85 @@
+<!--template-->
+<div class=" col-md-12 clearfix" style="margin-top: 40px;">
+
+
+    <div class="  col-md-2">
+
+        <a pre-href="localhost/<%= folder.userId %>/folder/<%= folder._id %>" href=""
+           class="btn btn-default col-md-8 c-a"
+           style="padding: 20px;">
+            <%= folder.name %>
+        </a>
+
+        <a ng-click="preCreateFolderFunction('<%= folder.name %>','<%= folder._id %>')"
+           class="btn btn-default col-md-4"
+           style="padding: 20px;">+</a>
+    </div>
+
+    <div class="  col-md-8">
+
+        <% if (folder.folders && folder.folders.length > 0) {
+        %>
+        <div class="  col-md-12">
+            <%
+                //网站名比较短 小于15
+                    folder.folders.forEach(function (subFolder) {
+            %>
+            <a pre-href="localhost/<%= subFolder.userId %>/folder/<%= subFolder._id %>" href=""
+               class="btn btn-default col-md-3 c-a"
+               style="padding: 20px;">
+                <%= subFolder.name %>
+            </a>
+            <%
+            })
+            %>
+
+        </div>
+
+        <%
+        }
+                if(folder.pages && folder.pages.length > 0){
+        %>
+
+        <div class="  col-md-12">
+            <%
+                //网站名比较长 大于15
+                    folder.pages.forEach(function (page) {
+
+
+
+            %>
+            <a pre-href="<%= page.link %>" target="_blank" class="  c-a" href=""
+               style="margin-top: 10px;display: block;height: 1px;">
+                <span class="glyphicon glyphicon-star" style="color:#ffd76e; "></span> <span
+                        style="color: #1155cc;"> <%= page.name %></span> - <%= page.link %>
+                <!-- #ff076e #1155cc; 0000cc-->
+            </a><br>
+            <%
+
+
+            })
+            %>
+
+        </div>
+
+        <%
+        } %>
+        <!--
+        <a ng-click="preAddPageFunction('<%= folder.name %>','<%= folder._id %>')" target="_blank"
+           class="btn btn-default col-md-3" style="padding: 20px;">
+            添加网址
+        </a>
+  -->
+
+    </div>
+
+    <div class="col-md-2">
+
+        <a ng-click="preAddPageFunction('<%= folder.name %>','<%= folder._id %>')" class="btn btn-default col-md-12"
+           style="padding: 20px;">添加网址</a>
+
+    </div>
+
+
+</div>
+<!--template end-->

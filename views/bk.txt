@@ -1,0 +1,68 @@
+<%=JSON.stringify(session)   %>
+
+ng-keyup="$event.keyCode == 13 ? createFolderFunction() : null"
+
+var valLength = 0;
+var val = bookmark.name;
+var ii=0;
+for (  ; ii < val.length; ii++) {
+    var word = val.substring(ii, 1);
+    if (/[^\x00-\xff]/g.test(word)) {
+        valLength += 2;
+    } else {
+        valLength++;
+    }
+    if(valLength >= 12) {
+        val = val.substring(0, ii)+'...';
+        break;
+    }
+}
+
+
+        <!--<a ng-click="preCreateFolderFunction('<%= folder.name %>','<%= folder._id %>')"
+           class="btn btn-default col-md-12"
+           style="padding: 20px;"><%= folder.name %></a>
+ -->
+
+ （!folder.folders || folder.folders.length<=0 ）&&（!folder.bookmarks || folder.bookmarks.length<=0)
+
+
+/*
+exports.subFolder = function (req, res, next) {
+
+    var pid = req.param("pid");
+    params.userId = req.cookies.tgy_userId;
+    //todo deal with login user
+
+    if (pid) {
+        var parentFolderName = null;
+        folderModel.findOne({_id: pid}, function (err, parentFolder) {
+            parentFolderName = parentFolder.name;
+
+            var params = {};
+            params.userId = req.cookies.tgy_userId;
+            params.pid = pid;
+            pageProxy.getFoldersAndPages(params, function (err, foldersAndPages) {
+                // console.log(folders)
+                res.render('index', {foldersAndPages: foldersAndPages, parentFolderId: pid, parentFolderName: parentFolderName,userId :params.userId });
+            });
+
+        });
+    }
+    else {
+
+        var params = {};
+        params.userId = req.cookies.tgy_userId;
+
+        pageProxy.getFoldersAndPages(params, function (err, foldersAndPages) {
+            // console.log(folders)
+            res.cookie('pages', foldersAndPages);
+            res.render('index', {foldersAndPages: foldersAndPages});
+        });
+
+        //console.log('can not find parent folder id');
+        //res.send('找不到收藏夹，缺少收藏夹pid');
+    }
+
+};
+*/

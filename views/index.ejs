@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html ng-app="pageMainApp" ng-controller="pageMainCtrl">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+
+    <script src="/javascripts/jquery-1.11.1.min.js"></script>
+    <script src="/javascripts/jquery.cookie.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="/javascripts/html5shiv.js"></script>
+    <script src="/javascripts/respond.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<!-- 菜单 开始 -->
+<div id="menu" class="container col-md-12 clearfix" style="height: 60px;padding-top: 10px;">
+    <div id="logo" class="col-md-3">LOGO</div>
+
+    <div class="col-md-2">
+        <div class="input-group">
+            <input id="search-input-baidu" placeholder="百度一下" ng-keyup="$event.keyCode == 13 ? searchBaidu() : null"
+                   type="text" class="form-control">
+            <span ng-click="searchBaidu( )" class="input-group-addon glyphicon glyphicon-search"></span>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="input-group">
+            <input id="search-input-google" placeholder="Google一下"
+                   ng-keyup="$event.keyCode == 13 ? searchGoogle() : null"
+                   type="text" class="form-control">
+            <span ng-click="searchGoogle( )" class="input-group-addon glyphicon glyphicon-search"></span>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+
+        <%
+        var userId;
+                if(session && session.user){
+            userId = session.user.userId;
+            %>
+        <a ng-click="logoutFunction( )" class="btn btn-default"><span style="font-size: 14px;"> 登出</span></a>
+        <%
+        }
+        else{
+            userId = '游客';
+        %>
+        <button ng-click="preLoginFunction( )" class="btn btn-default col-md-4">登录</button>
+        <button ng-click="preAddUserFunction( )" class="btn btn-default col-md-4">注册</button>
+
+        <%
+        }
+        %>
+        <a class="btn btn-default"><span style="font-size: 14px;"> 当前用户:</span><%= userId %></a>
+
+    </div>
+
+    <div id="goto-div" class="col-md-2">
+        <div class="input-group">
+            <input id="goto-input" placeholder="用户名" ng-keyup="$event.keyCode == 13 ? goTo() : null" type="text"
+                   class="form-control">
+            <span ng-click="goTo( )" class="input-group-addon glyphicon glyphicon-chevron-right"></span>
+        </div>
+    </div>
+</div>
+
+<!-- 菜单 结束 -->
+
+<!-- 分割线 -->
+<hr class="divider col-sm-12"
+    style="border-top: 4px solid #eee; margin-top: 1px;">
+
+
+<!-- 书签主页面 -->
+<div class="container col-md-12 clearfix">
+    <!-- 左侧书签列表 -->
+    <div id="bookmarks-sidebar" class="container col-md-2"><!-- page main-->
+         <span>书签列表：</span>
+        <% if( typeof bookmarks != 'undefined' && bookmarks != null){
+                bookmarks.forEach(function (bookmark) {
+                    var defaultStyle = ' ';
+                    bookmark._id == ext.curBookmarkId ?defaultStyle = 'font-weight:bold':null;
+
+
+        %>
+        <a pre-href="localhost/<%= bookmark.userId %>/bookmark/<%= bookmark._id %>" href=""
+           class="  col-md-10 c-a" style="<%=defaultStyle%>">
+
+            <%= bookmark.name %>
+            <%if(  bookmark._id == ext.curBookmarkId ){ //标记选中书签
+                ext.curbookmarkName = bookmark.name;
+            %>
+            <span class="glyphicon glyphicon-ok" style="color:green;  "></span>
+            <%
+            }%>
+        </a>
+
+        <%
+        });
+        }
+        else{ //没有设置任何书签
+        %>
+        <a class="col-md-12"> 我的书签1 </a>
+        <%
+        } %>
+
+
+
+
+        <a class="col-md-12" ng-click="preAddBookmarkFunction()" style="margin-top: 20px;"> >>创建新书签 </a>
+
+        <div><p class="col-md-2"></p></div>
+    </div>
+
+    <!-------------------------------- 右侧 书签主页面 -------------------------------->
+    <div id="pageMain" class="  col-md-10">
+
+        <!--------面包屑----------->
+        <ol class="breadcrumb">
+            <li><a href="#">系统默认书签</a></li>
+            <li><a href="#">主目录</a></li>
+            <li class="active">分目录</li>
+        </ol>
+
+        <!--------遍历文件夹----------->
+        <% if ( folders && folders.length > 0) {
+        %>
+        <div class="  col-md-12">
+            <%
+            folders.forEach(function (subFolder) {
+            %>
+            <a pre-href="localhost/<%= subFolder.userId %>/folder/<%= subFolder._id %>" href=""
+               class="btn btn-default col-md-2 c-a"
+               style="padding: 10px;height: 40px;">
+                <%= subFolder.name %>
+            </a>
+            <%
+            })
+            %>
+
+        </div>
+        <% if( typeof ext != 'undefined' && ext){ %>
+        <div class="col-md-offset-9  col-md-3" style="margin-top: 20px;">
+
+            <a ng-click="preCreateFolderFunction('<%= ext.curBookmarkId %>','<%= ext.curFolderId %>')"
+               class="col-md-12"> >>添加文件夹 </a>
+
+        </div>
+
+        <%
+        }
+        %>
+
+        <!--------分割线----------->
+        <hr class="divider col-sm-8"
+            style="border-top: 2px solid #eee; margin-top: 20px;">
+
+        <!--------遍历网页----------->
+        <%
+        }
+                if(pages &&   pages.length > 0){
+        %>
+
+        <div class="  col-md-12">
+            <%
+            pages.forEach(function (page) {
+            %>
+            <a pre-href="<%= page.link %>" target="_blank" class="  c-a" href=""
+               style="margin-top: 10px;display: block;height: 1px;">
+                <span class="glyphicon glyphicon-star" style="color:#ffd76e; "></span> <span
+                        style="color: #1155cc;"> <%= page.name %></span> - <%= page.link %>
+                <!-- #ff076e #1155cc; 0000cc-->
+            </a><br>
+            <%
+            })
+            %>
+
+        </div>
+
+        <%
+        } %>
+
+        <!--------添加网页和收藏夹 按钮----------->
+        <% if( typeof ext != 'undefined' && ext){ %>
+        <div class="col-md-offset-9   col-md-3" style="margin-top: 20px;">
+            <a ng-click="preAddPageFunction('<%= ext.curBookmarkId %>','<%= ext.curFolderId %>')"
+               class="col-md-12"> >>添加网址 </a>
+
+
+        </div>
+
+        <%
+        }
+        %>
+
+        <hr class="divider col-sm-10"
+            style="border-top: 2px solid #eee; margin-top: 2px;">
+
+    </div>
+    <!-------------------------------- 右侧 书签列表页面 end    -------------------------------->
+
+</div>
+
+<!-- page main end-->
+
+
+<!-- create bookmark model -->
+<div class="modal fade" id="createBookmarkModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createBookmarkModel %>
+</div>
+
+<!-- create folder model -->
+<div class="modal fade" id="createFolderModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createFolderModel %>
+</div>
+
+
+<!-- create page model -->
+<div class="modal fade" id="createPageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createPageModel %>
+</div>
+
+<!-- create user Modal -->
+<div class="modal fade" id="createUserModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createUserModel %>
+</div>
+
+<!-- login Modal -->
+<div class="modal fade" id="loginModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/loginModel %>
+</div>
+
+<script>
+var app = angular.module("pageMainApp", []);
+app.controller("pageMainCtrl", function ($scope, $element, $http) {
+    /*
+     $scope.init = function () {
+     alert( $.cookie('pages') ) ; ;// 读取 cookie
+     };
+     $scope.init();
+     */
+
+
+    $scope.preAddBookmarkFunction = function () {
+
+        $('#createBookmarkModel').modal();
+
+       // location.href = '#createBookmark_bookmarkName';
+
+        //alert('ng add');
+    }
+    $scope.createBookmarkFunction = function () {
+        $http({
+            url: "http://localhost/bookmark/create",
+            method: "POST",
+            data: {"createBookmark_bookmarkName": $('#createBookmark_bookmarkName').val(),
+                "createBookmark_username": $('#createBookmark_username').val(),
+                "createBookmark_password": $('#createBookmark_password').val()
+
+            }
+        }).success(function (data, status, headers, config) {
+           // alert('添加成功' + JSON.stringify(data));
+            $('#createBookmarkModel').modal('hide');
+            $scope.ngBookmarks = data;
+
+
+             location.reload(true);
+            //$scope.data = data;
+        }).error(function (data, status, headers, config) {
+            alert('服务器正在飞速运转，请耐心等待' + data);
+            //  $scope.status = status;
+        });
+
+    };
+
+
+    $scope.preCreateFolderFunction = function (parentFolderName, parentFolderId) {
+
+        $('#createFolderModel').modal()
+
+       // $('#createFolder_parentName').val(parentFolderName);
+        //$('#createFolder_parentFolderId').val(parentFolderId);
+        //location.href = '#createFolder_folderName';
+
+        //alert('ng add');
+    }
+
+    $scope.createFolderFunction = function () {
+        $http({
+            url: "http://localhost/<%=ext.userId%>/bookmark/<%=ext.parentBookmarkId%>/folder/create",
+            method: "POST",
+            data: {"folderName": $('#createFolder_folderName').val(),
+                "parentFolderId": $('#createFolder_parentFolderId').val()}
+        }).success(function (data, status, headers, config) {
+            //  alert('添加成功');
+            location.reload(true);
+            //$scope.data = data;
+        }).error(function (data, status, headers, config) {
+            alert('服务器正在飞速运转，请耐心等待' + data);
+            //  $scope.status = status;
+        });
+
+    };
+
+    $scope.preAddPageFunction = function (folderName, folderId) {
+
+        // $('#createPageDiv').show();
+        $('#createPageModel').modal()
+
+        $('#createPage_folderName').val(folderName);
+        $('#createPage_folderId').val(folderId);
+        //$('#pageUrl').focus();
+
+        //location.href = '#pageUrl';
+
+        //alert('ng add');
+    };
+    $scope.createPageFunction = function () {
+        $http({
+            url: "http://localhost/<%=ext.userId%>/bookmark/<%=ext.parentBookmarkId%>/folder/<%=ext.parentFolderId%>/page/create",
+            method: "POST",
+            data: {"folderId": $('#createPage_folderId').val(),
+                "pageUrl": $('#pageUrl').val(),
+                "pageName": $('#pageName').val()
+            }
+        }).success(function (data, status, headers, config) {
+            // alert('添加成功');
+            location.reload(true);
+            //$scope.data = data;
+        }).error(function (data, status, headers, config) {
+            alert('服务器正在飞速运转，请耐心等待' + data);
+            //  $scope.status = status;
+        });
+        //alert('ng add');
+    }
+
+    $scope.preAddUserFunction = function () {
+
+        // $('#createPageDiv').show();
+        $('#createUserModel').modal()
+        //alert('ng add');
+    }
+    $scope.addUserFunction = function () {
+        $http({
+            url: "http://localhost/user/create",
+            method: "POST",
+            data: {"name": $('#createUser-name').val(),
+                "password": $('#createUser-password').val()}
+        }).success(function (data, status, headers, config) {
+            $('#createUserModel').modal('hide');
+            alert(data);
+            location.reload(true);
+            //$scope.data = data;
+        }).error(function (data, status, headers, config) {
+            alert('服务器正在飞速运转，请耐心等待' + data);
+            //  $scope.status = status;
+        });
+
+    };
+
+    $scope.preLoginFunction = function () {
+
+        // $('#createPageDiv').show();
+        $('#loginModel').modal()
+        //alert('ng add');
+    }
+    $scope.loginFunction = function () {
+        $http({
+            url: "http://localhost/user/login",
+            method: "POST",
+            data: {"name": $('#login-name').val(),
+                "password": $('#login-password').val()}
+        }).success(function (data, status, headers, config) {
+
+            if(data == '登录成功'){
+                $('#loginModel').modal('hide');
+                location.href = 'http://localhost/';
+            }
+            else{
+                alert(data);
+            }
+
+           // alert(data);
+
+            //$scope.data = data;
+        }).error(function (data, status, headers, config) {
+            alert('服务器正在飞速运转，请耐心等待' + data);
+            //  $scope.status = status;
+        });
+
+    };
+    $scope.logoutFunction = function () {
+        $http({
+            url: "http://localhost/user/logout",
+            method: "POST",
+            data: { }
+        }).success(function (data, status, headers, config) {
+           // $('#loginModel').modal('hide');
+            alert(data);
+            location.href = 'http://localhost/';
+            //$scope.data = data;
+        }).error(function (data, status, headers, config) {
+            alert('服务器正在飞速运转，请耐心等待' + data);
+            //  $scope.status = status;
+        });
+
+    };
+
+    $scope.goTo = function () {
+        location.href = 'http://localhost/' + $('#goto-input').val();
+    };
+
+    $scope.searchBaidu = function () {
+        //location.href = 'http://www.baidu.com/s?wd=' + $('#search-input').val();
+        window.open('http://www.baidu.com/s?wd=' + $('#search-input-baidu').val());
+    };
+    $scope.searchGoogle = function () {
+        //location.href = 'http://www.baidu.com/s?wd=' + $('#search-input').val();
+        window.open('https://www.google.com.hk/search?q=' + $('#search-input-google').val());
+    };
+
+
+    $(".c-a").click(function (event) {
+        if ($(this).attr("pre-href") !== null) {
+
+            $(this).attr("href", $(this).attr("pre-href"));
+            if ($(this).attr("href").indexOf("http://") == -1 &&
+                    $(this).attr("href").indexOf("https://") == -1
+                    ) {
+                $(this).attr("href", "http://" + $(this).attr("href"));
+            }
+
+            $(this).trigger("click");
+        }
+        //    return false;
+    })
+
+    $scope.openLink = function (event) {
+        $("a").click(function (event) {
+            event.stopPropagation(); // do something
+        })
+    }
+});
+
+function CheckLength(txtObj) {
+    var val = txtObj.val();
+    var valLength = 0;
+    for (var ii = 0; ii < val.length; ii++) {
+        var word = val.substring(ii, 1);
+        if (/[^\x00-\xff]/g.test(word)) {
+            valLength += 2;
+        } else {
+            valLength++;
+        }
+    }
+    return valLength;
+}
+/*
+ //alert($(this).attr("pre-href"))
+
+ $http({
+ url: "http://example.appspot.com/rest/app",
+ method: "POST",
+ data: {"foo": "bar"}
+ }).success(function (data, status, headers, config) {
+ $scope.data = data;
+ }).error(function (data, status, headers, config) {
+ $scope.status = status;
+ });*/
+
+</script>
+</body>
+</html>

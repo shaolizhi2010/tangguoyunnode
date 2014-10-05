@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <script src="javascripts/angular.min.js"></script>
+    <script src="javascripts/ui-bootstrap-0.11.0.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="javascripts/html5shiv.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<div class="container col-md-12" style="height: 40px;">
+    <h5>糖果云书签--我的云书签--网址导航--用户名--管理--看看大家都上什么网站
+    <a href="login.html">登录</a>
+    </h5>
+</div>
+
+
+<div class="container col-md-12" ng-app="bookmarkMainApp" ng-controller="bookmarkMainCtrl"><!-- bookmark main-->
+
+    <!--template-->
+    <div class=" col-md-12 clearfix" style="margin-top: 40px;" ng-repeat="folder in folders">
+
+        <div class="  col-md-2">
+
+            <a class="btn btn-default col-md-12" style="padding: 20px;">{{ folder.name }}</a>
+
+        </div>
+
+        <div class="  col-md-8">
+            <a ng-repeat="bookmark in folder.bookmarks"
+               href="{{bookmark.url}}" target="_blank" class="btn btn-default col-md-3" style="padding: 20px;">{{bookmark.name}}</a>
+        </div>
+
+        <div class="  col-md-2">
+            <a class="btn btn-default col-md-12" style="padding: 20px;">添加网址</a>
+        </div>
+    </div>
+    <!--template end-->
+
+    <!--template-->
+    <div class=" col-md-12 clearfix" style="margin-top: 40px;">
+
+        <div class="  col-md-2">
+
+            <a class="btn btn-default col-md-12" style="padding: 20px;">添加收藏夹</a>
+
+        </div>
+
+        <div class="  col-md-8">
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+            <a class="btn btn-default col-md-3" style="padding: 20px;">添加网址</a>
+
+        </div>
+
+
+        <div class="  col-md-2">
+            <a class="btn btn-default col-md-12" style="padding: 20px;">添加网址</a>
+        </div>
+    </div>
+    <!--template end-->
+
+
+</div>
+<!-- bookmark main end-->
+
+
+<script>
+
+    var folders = [
+        {
+            "name": "常用",
+            "bookmarks": [
+                {
+                    "name": "google",
+                    "url": "http://google.com.hk/"
+                },
+                {
+                    "name": "51CTO",
+                    "url": "http://51cto.com/"
+                },
+                {
+                    "name": "baidu",
+                    "url": "http://baidu.com/"
+                },
+                {
+                    "name": "派代",
+                    "url": "http://paidai.com/"
+                },
+                {
+                    "name": "dict",
+                    "url": "http://dict.cn/"
+                }
+            ]
+        },
+        {
+            "name": "技术",
+            "bookmarks": [
+                {
+                    "name": "express",
+                    "url": "http://expressjs.com/4x/api.html"
+                },
+                {
+                    "name": "angularjs",
+                    "url": "https://angularjs.org/"
+                },
+                {
+                    "name": "nodejs",
+                    "url": "http://nodejs.org/"
+                },
+                {
+                    "name": "angular-bootstrap",
+                    "url": "http://angular-ui.github.io/bootstrap/"
+                }
+            ]
+        }
+    ];
+
+
+    var app = angular.module("bookmarkMainApp", []);
+    app.controller("bookmarkMainCtrl", function ($scope) {
+
+        $scope.folders = folders;
+
+    });
+
+
+</script>
+</body>
+</html>

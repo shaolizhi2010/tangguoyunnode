@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html ng-app="pageMainApp" ng-controller="pageMainCtrl">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+
+    <script src="/javascripts/jquery-1.11.1.min.js"></script>
+    <script src="/javascripts/jquery.cookie.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="/javascripts/html5shiv.js"></script>
+    <script src="/javascripts/respond.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<div id="menu" class="container col-md-12" style="height: 40px;">
+    <div id="logo" class="col-md-3">LOGO</div>
+    <div id="logo" class="col-md-4">
+
+
+    </div>
+
+    <h5>糖果云书签--我的云书签--兴趣组-网址导航--用户名--管理--看看大家都上什么网站
+        <a ng-click="preAddUserFunction( )" href="">注册</a>
+        <a ng-click="preLoginFunction( )" href="">登录</a>
+    </h5>
+</div>
+
+<div id="pageMain" class="container col-md-12"><!-- page main-->
+
+    <!--page links-->
+    <% if (typeof(folders) === 'undefined' || folders.length <= 0) {
+        <!-- no nay folder, set default folder-->
+        folders = [
+            {name: '默认收藏夹'}
+        ];
+    }
+    %>
+
+    <% folders.forEach(function(folder){ %>
+    <% include bookmark/folder %>
+    <% }) %>
+    <!--page links end-->
+
+
+    <div class=" col-md-3 clearfix" style="margin-top: 40px;">
+        <form role="form">
+            <div class="form-group col-md-12">
+                <button ng-click="preCreateFolderFunction()"
+                        type="button" class="btn btn-default col-md-12">添加收藏夹
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+<!-- page main end-->
+
+
+<!--test -->
+
+<!-- create folder model -->
+<div class="modal fade" id="createFolderModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createFolderModel %>
+</div>
+
+
+<!-- create page model -->
+<div class="modal fade" id="createPageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createPageModel %>
+</div>
+
+<!-- create user Modal -->
+<div class="modal fade" id="createUserModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/createUserModel %>
+</div>
+
+<!-- login Modal -->
+<div class="modal fade" id="loginModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <%- include model/loginModel %>
+</div>
+
+<script>
+    var app = angular.module("pageMainApp", []);
+    app.controller("pageMainCtrl", function ($scope, $element, $http) {
+        /*
+         $scope.init = function () {
+         alert( $.cookie('pages') ) ; ;// 读取 cookie
+         };
+         $scope.init();
+         */
+
+
+        $scope.preCreateFolderFunction = function (parentFolderName, parentFolderId) {
+
+            $('#createFolderModel').modal()
+
+            $('#createFolder_parentName').val(parentFolderName);
+            $('#createFolder_parentFolderId').val(parentFolderId);
+            location.href = '#createFolder_folderName';
+
+            //alert('ng add');
+        }
+
+        $scope.createFolderFunction = function () {
+            $http({
+                url: "http://localhost/folder/create",
+                method: "POST",
+                data: {"folderName": $('#createFolder_folderName').val(),
+                    "parentFolderId": $('#createFolder_parentFolderId').val()}
+            }).success(function (data, status, headers, config) {
+                //  alert('添加成功');
+                location.reload(true);
+                //$scope.data = data;
+            }).error(function (data, status, headers, config) {
+                alert('服务器正在飞速运转，请耐心等待' + data);
+                //  $scope.status = status;
+            });
+
+        };
+
+        $scope.preAddPageFunction = function (folderName, folderId) {
+
+            // $('#createPageDiv').show();
+            $('#createPageModel').modal()
+
+            $('#createPage_folderName').val(folderName);
+            $('#createPage_folderId').val(folderId);
+            //$('#pageUrl').focus();
+
+            //location.href = '#pageUrl';
+
+            //alert('ng add');
+        };
+        $scope.createPageFunction = function () {
+            $http({
+                url: "http://localhost/page/create",
+                method: "POST",
+                data: {"folderId": $('#createPage_folderId').val(),
+                    "pageUrl": $('#pageUrl').val(),
+                    "pageName": $('#pageName').val()
+                }
+            }).success(function (data, status, headers, config) {
+                // alert('添加成功');
+                location.reload(true);
+                //$scope.data = data;
+            }).error(function (data, status, headers, config) {
+                alert('服务器正在飞速运转，请耐心等待' + data);
+                //  $scope.status = status;
+            });
+            //alert('ng add');
+        }
+
+        $scope.preAddUserFunction = function () {
+
+            // $('#createPageDiv').show();
+            $('#createUserModel').modal()
+            //alert('ng add');
+        }
+        $scope.addUserFunction = function () {
+            $http({
+                url: "http://localhost/user/create",
+                method: "POST",
+                data: {"name": $('#createUser-name').val(),
+                    "password": $('#createUser-password').val()}
+            }).success(function (data, status, headers, config) {
+                $('#createUserModel').modal('hide');
+                alert(data);
+
+                //$scope.data = data;
+            }).error(function (data, status, headers, config) {
+                alert('服务器正在飞速运转，请耐心等待' + data);
+                //  $scope.status = status;
+            });
+
+        };
+
+        $scope.preLoginFunction = function () {
+
+            // $('#createPageDiv').show();
+            $('#loginModel').modal()
+            //alert('ng add');
+        }
+        $scope.loginFunction = function () {
+            $http({
+                url: "http://localhost/user/login",
+                method: "POST",
+                data: {"name": $('#login-name').val(),
+                    "password": $('#login-password').val()}
+            }).success(function (data, status, headers, config) {
+                $('#loginModel').modal('hide');
+                alert(data);
+
+                //$scope.data = data;
+            }).error(function (data, status, headers, config) {
+                alert('服务器正在飞速运转，请耐心等待' + data);
+                //  $scope.status = status;
+            });
+
+        };
+
+
+        $(".c-a").click(function (event) {
+            if ($(this).attr("pre-href") !== null) {
+
+                $(this).attr("href", $(this).attr("pre-href"));
+                if ($(this).attr("href").indexOf("http://") == -1 &&
+                        $(this).attr("href").indexOf("https://") == -1
+                        ) {
+                    $(this).attr("href", "http://" + $(this).attr("href"));
+                }
+
+                $(this).trigger("click");
+            }
+            //    return false;
+        })
+
+        $scope.openLink = function (event) {
+            $("a").click(function (event) {
+                event.stopPropagation(); // do something
+            })
+        }
+    });
+
+    function CheckLength(txtObj) {
+        var val = txtObj.val();
+        var valLength = 0;
+        for (var ii = 0; ii < val.length; ii++) {
+            var word = val.substring(ii, 1);
+            if (/[^\x00-\xff]/g.test(word)) {
+                valLength += 2;
+            } else {
+                valLength++;
+            }
+        }
+        return valLength;
+    }
+    /*
+     //alert($(this).attr("pre-href"))
+
+     $http({
+     url: "http://example.appspot.com/rest/app",
+     method: "POST",
+     data: {"foo": "bar"}
+     }).success(function (data, status, headers, config) {
+     $scope.data = data;
+     }).error(function (data, status, headers, config) {
+     $scope.status = status;
+     });*/
+
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<%
+var valLength = 0;
+var val = pagek.name;
+var ii = 0;
+for (; ii < val.length; ii++) {
+    var word = val.substring(ii, 1);
+    if (/[^\x00-\xff]/g.test(word)) {
+        valLength += 2;
+    } else {
+        valLength++;
+    }
+
+}
+%>
+<%
+if(valLength < 15){
+%>
+<a pre-href="<%= pagek.link %>" target="_blank" class="btn btn-default col-md-3 c-a" style="padding: 20px;">
+    <%= val %>
+</a>
+<%
+}
+else{
+%>
+<a pre-href="<%= pagek.link %>" target="_blank" class=" c-a" style="padding: 20px;">
+    <%= val %>
+</a>
+<br>
+
+<%
+}
+%>
+
+
+
+
