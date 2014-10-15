@@ -1,0 +1,29 @@
+<div class="  col-md-12">
+    <%
+    var subFolders1;
+    subFolders.forEach(function (folder) {
+        if (folder.folders && folder.folders.length > 0) {
+            subFolders1 = folder.folders;
+        }
+    %>
+    <a pre-href="localhost/<%= folder.userId %>/bookmark/<%= folder.bookmarkId %>/folder/<%= folder._id %>"
+       href=""
+       class="btn btn-default col-md-2 c-a"
+       style="padding: 10px;height: 40px;">
+        <%= folder.name %>
+    </a>
+    <%
+    })//end forEach
+    %>
+
+</div>
+<%
+if(subFolders1 && subFolders1.length > 0){ //
+    
+%>
+<%include  test2%>
+<%
+}
+
+
+%>

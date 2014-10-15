@@ -74,19 +74,21 @@ exports.createUser = function (req, res, next) {
     param.userId = req.param("name");
    // param.name = req.param("name");
     param.password = req.param("password");
-    param.historyUserId = req.cookies.tgy_userId;
+    //param.historyUserId = req.cookies.tgy_userId;
 
     //替换掉用户的临时userid
+    /*
     FolderModel.update({ "userId": req.cookies.tgy_userId}, { "userId": req.param("name"), "historyUserId": req.cookies.tgy_userId},{ multi: true },function(err){
         console.log(err);
         if (err) return handleError(err);
     });
 
+
     PageModel.update({ "userId": req.cookies.tgy_userId}, { "userId": req.param("name"), "historyUserId": req.cookies.tgy_userId},{ multi: true },function(err){
         console.log(err);
         if (err) return handleError(err);
     });
-
+     */
     //req.cookies.tgy_userId
    // Folder.
 

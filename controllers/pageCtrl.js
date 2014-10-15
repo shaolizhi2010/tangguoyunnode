@@ -3,16 +3,16 @@ var pageProxy = require('../proxy').Page;
 var folderModel = require('../models').Folder;
 
 
-exports.getPages = function (req,res,ep) {
+exports.getPages = function (curBookmarkId,req,res,ep) {
 
     var userId = req.session.user.userId;
-    var bookmarkId = req.param("bookmarkId");
-    var pid = req.param("pid");
+    var bookmarkId =  curBookmarkId?curBookmarkId: req.param("bookmarkId");
+    var pid = req.param("folderId");
 
     var param = {};
     userId ? param.userId = userId:null;
     bookmarkId?param.bookmarkId = bookmarkId:null;
-    pid ? param.pid = pid:null;
+    pid ? param.pid = pid:param.pid=null;
 
     //console.log('getPages param : ' + JSON.stringify( param));
 

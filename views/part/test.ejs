@@ -1,0 +1,21 @@
+
+
+    <%
+    var subFolders;
+    folders.forEach(function (folder) {
+        var defaultStyle = 'btn-default ';
+        folder._id == ext.curFolderId ? defaultStyle = 'btn-info' : null;
+        if (folder.folders && folder.folders.length > 0) {
+            subFolders = folder.folders;
+        }
+    %>
+    <a pre-href="localhost/<%= folder.userId %>/bookmark/<%= folder.bookmarkId %>/folder/<%= folder._id %>"
+       href=""
+       class="  col-md-2 c-a"
+       style="padding: 10px; color: #000000;">
+       <span class="glyphicon glyphicon-folder-open" style="color:orange;margin-right: 5px;font-weight: bold;"></span>   <%= folder.name %>
+    </a>
+    <%
+    })//end forEach
+    %>
+

@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 var bodyParser = require('body-parser');
 var cheerio = require('cheerio');
-var domainMiddleware = require('domain-middleware');
+//var domainMiddleware = require('domain-middleware');
 
 //var routes = require('./routes/index');
 //var users = require('./routes/users');
@@ -39,7 +39,7 @@ app.use(expressSession({
     saveUninitialized: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(require('express-domain-middleware')); //todo
+//app.use(require('express-domain-middleware')); //todo
 
 //如果cookie中没有用户id，认为用户首次登录，则为用户生成一个新的id，并存贮在用户cookie中。
 //app.use(user.checkCookie);
@@ -53,13 +53,32 @@ app.all('/', siteCtrl.index);
 app.all('/user/login', userCtrl.login);
 app.all('/user/logout', userCtrl.logout);
 
+//show bookmark
 app.all('/:userId/bookmark/:bookmarkId', siteCtrl.index);
+app.all('//bookmark/:bookmarkId', siteCtrl.index); //default bookmark,no useId
+app.all('//bookmark//', siteCtrl.index); //default bookmark,no userId and bookmarkId
+
+
+//create bookmark
 app.all('/bookmark/create', siteCtrl.createBookmark);
 
+//create page
 app.all('/:userId/bookmark/:bookmarkId/folder/:folderId/page/create', pageCtrl.create);
 app.all('/:userId/bookmark/:bookmarkId/folder//page/create', pageCtrl.create);
 
-app.all('/:userId/bookmark/:bookmarkId/folder/create', folderCtrl.create);
+//create folder
+app.all('/:userId/bookmark/:bookmarkId/folder/', folderCtrl.create);
+app.all('/:userId/bookmark/:bookmarkId/folder/:folderId/create', folderCtrl.create);
+app.all('/:userId/bookmark/:bookmarkId/folder//create', folderCtrl.create);
+app.all('/:userId/bookmark/:bookmarkId/folder/:folderId/folder/create', folderCtrl.create);
+
+
+//view folder
+app.all('/:userId/bookmark/:bookmarkId/folder/:folderId', siteCtrl.index);
+app.all('//bookmark//folder/', siteCtrl.index);
+app.all('//bookmark//folder//', siteCtrl.index);
+
+
 
 //app.all('/:userId', user.checkUserId);
 app.all('/:userId', siteCtrl.index);

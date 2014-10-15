@@ -1,4 +1,4 @@
-var EventProxy = require('eventproxy')
+var EventProxy = require('eventproxy');
 
 var pageProxy = require('../proxy').Page;
 var userProxy = require('../proxy').User;
@@ -26,7 +26,7 @@ exports.index = function (req, res, next) {
 
         var userId = req.session.user.userId;
         var bookmarkId = req.param("bookmarkId");
-        var pid = req.param("pid");
+        var pid = req.param("folderId");
         console.log('site index userId ： ' + userId + ' bookmarkId :' + bookmarkId + " pid : " + pid);
 
         var curBookmarkId; //用户当前bookmarkId
@@ -37,7 +37,7 @@ exports.index = function (req, res, next) {
         ext.parentFolderId = '';
         ext.parentFolderName = '';
         ext.curBookmarkId ='';
-
+        ext.curFolderId=pid;
 
         var ep = new EventProxy();
 
@@ -45,7 +45,7 @@ exports.index = function (req, res, next) {
         bookmarkController.getBookmarks(req,res,ep);
 
         //if parentFolderId is exist, get parent Folder info
-        /*
+
         if(pid){
             // get parentFolderName
             folderModel.findOne({_id: pid}, function (err, parentFolder) {
@@ -54,14 +54,22 @@ exports.index = function (req, res, next) {
                 ep.emit("parentFolderName", parentFolderName);
 
             });
-        }*/
+        }
 
         ep.once('getBookmarksDone', function (bookmarks) {
-            bookmarkId ?ext.curBookmarkId=bookmarkId:ext.curBookmarkId=bookmarks[0]._id;
+            if(bookmarks && bookmarks.length>0){
+                bookmarkId ?ext.curBookmarkId=bookmarkId:ext.curBookmarkId=bookmarks[0]._id;
+            }
+
+
+            //req.param('bookmarkId',ext.curBookmarkId);
+
+            pageController.getPages(ext.curBookmarkId,req,res,ep);
+            folderController.getFolders(ext.curBookmarkId,req,res,ep);
+
         });
 
-        pageController.getPages(req,res,ep);
-        folderController.getFolders(req,res,ep);
+
 
         ep.all("getBookmarksDone","getFoldersDone","getPagesDone",function(bookmarks,folders,pages){
             //console.log('render folders : ' + folders);
@@ -73,6 +81,8 @@ exports.index = function (req, res, next) {
 
 
 };
+
+
 
 
 //创建新书签

@@ -21,7 +21,7 @@
 <body>
 
 <!-- 菜单 开始 -->
-<div id="menu" class="container col-md-12 clearfix" style="height: 60px;padding-top: 10px;">
+<div id="menu" class="container col-md-12 " style=" padding-top: 10px; ">
     <div id="logo" class="col-md-3">LOGO</div>
 
     <div class="col-md-2">
@@ -46,7 +46,7 @@
         var userId;
                 if(session && session.user){
             userId = session.user.userId;
-            %>
+        %>
         <a ng-click="logoutFunction( )" class="btn btn-default"><span style="font-size: 14px;"> 登出</span></a>
         <%
         }
@@ -83,24 +83,22 @@
 <div class="container col-md-12 clearfix">
     <!-- 左侧书签列表 -->
     <div id="bookmarks-sidebar" class="container col-md-2"><!-- page main-->
-         <span>书签列表：</span>
+        <span>书签列表：</span>
         <% if( typeof bookmarks != 'undefined' && bookmarks != null){
                 bookmarks.forEach(function (bookmark) {
-                    var defaultStyle = ' ';
-                    bookmark._id == ext.curBookmarkId ?defaultStyle = 'font-weight:bold':null;
-
-
+            var defaultStyle = ' ';
+            bookmark._id == ext.curBookmarkId ? defaultStyle = 'font-weight:bold' : null;
         %>
         <a pre-href="localhost/<%= bookmark.userId %>/bookmark/<%= bookmark._id %>" href=""
-           class="  col-md-10 c-a" style="<%=defaultStyle%>">
+           class="  col-md-10 c-a" style="<%= defaultStyle %>">
 
             <%= bookmark.name %>
-            <%if(  bookmark._id == ext.curBookmarkId ){ //标记选中书签
+            <% if(  bookmark._id == ext.curBookmarkId ){ //标记选中书签
                 ext.curbookmarkName = bookmark.name;
             %>
             <span class="glyphicon glyphicon-ok" style="color:green;  "></span>
             <%
-            }%>
+            } %>
         </a>
 
         <%
@@ -111,9 +109,6 @@
         <a class="col-md-12"> 我的书签1 </a>
         <%
         } %>
-
-
-
 
         <a class="col-md-12" ng-click="preAddBookmarkFunction()" style="margin-top: 20px;"> >>创建新书签 </a>
 
@@ -131,42 +126,32 @@
         </ol>
 
         <!--------遍历文件夹----------->
-        <% if ( folders && folders.length > 0) {
-        %>
         <div class="  col-md-12">
-            <%
-            folders.forEach(function (subFolder) {
+            <% if ( folders && folders.length > 0) {
             %>
-            <a pre-href="localhost/<%= subFolder.userId %>/folder/<%= subFolder._id %>" href=""
-               class="btn btn-default col-md-2 c-a"
-               style="padding: 10px;height: 40px;">
-                <%= subFolder.name %>
-            </a>
+            <%- include part/test %>
             <%
-            })
-            %>
+            } %>
 
-        </div>
-        <% if( typeof ext != 'undefined' && ext){ %>
-        <div class="col-md-offset-9  col-md-3" style="margin-top: 20px;">
 
+            <% if( typeof ext != 'undefined' && ext){ %>
             <a ng-click="preCreateFolderFunction('<%= ext.curBookmarkId %>','<%= ext.curFolderId %>')"
-               class="col-md-12"> >>添加文件夹 </a>
+               class="  col-md-4  " href="#"  style="padding: 10px; color: #000000;"> <span class="glyphicon glyphicon-folder-open" style="color:orange;margin-right: 5px;"></span>
+                >>添加收藏夹
+            </a>
+
+            <%
+            }
+            %>
 
         </div>
-
-        <%
-        }
-        %>
-
         <!--------分割线----------->
         <hr class="divider col-sm-8"
             style="border-top: 2px solid #eee; margin-top: 20px;">
 
         <!--------遍历网页----------->
         <%
-        }
-                if(pages &&   pages.length > 0){
+        if(pages && pages.length > 0){
         %>
 
         <div class="  col-md-12">
@@ -190,12 +175,18 @@
 
         <!--------添加网页和收藏夹 按钮----------->
         <% if( typeof ext != 'undefined' && ext){ %>
-        <div class="col-md-offset-9   col-md-3" style="margin-top: 20px;">
+
             <a ng-click="preAddPageFunction('<%= ext.curBookmarkId %>','<%= ext.curFolderId %>')"
-               class="col-md-12"> >>添加网址 </a>
+               class="col-md-12" style="margin-top: 10px;">
+
+                <span class="glyphicon glyphicon-star" style="color:#ffd76e; "></span> <span
+                        style="color: #1155cc;"> >>添加网址</span> - 添加网址
 
 
-        </div>
+            </a>
+
+
+
 
         <%
         }
@@ -258,7 +249,7 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
 
         $('#createBookmarkModel').modal();
 
-       // location.href = '#createBookmark_bookmarkName';
+        // location.href = '#createBookmark_bookmarkName';
 
         //alert('ng add');
     }
@@ -272,12 +263,12 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
 
             }
         }).success(function (data, status, headers, config) {
-           // alert('添加成功' + JSON.stringify(data));
+            // alert('添加成功' + JSON.stringify(data));
             $('#createBookmarkModel').modal('hide');
             $scope.ngBookmarks = data;
 
 
-             location.reload(true);
+            location.reload(true);
             //$scope.data = data;
         }).error(function (data, status, headers, config) {
             alert('服务器正在飞速运转，请耐心等待' + data);
@@ -291,7 +282,7 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
 
         $('#createFolderModel').modal()
 
-       // $('#createFolder_parentName').val(parentFolderName);
+        // $('#createFolder_parentName').val(parentFolderName);
         //$('#createFolder_parentFolderId').val(parentFolderId);
         //location.href = '#createFolder_folderName';
 
@@ -300,7 +291,7 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
 
     $scope.createFolderFunction = function () {
         $http({
-            url: "http://localhost/<%=ext.userId%>/bookmark/<%=ext.parentBookmarkId%>/folder/create",
+            url: "http://localhost/<%=ext.userId%>/bookmark/<%=ext.curBookmarkId%>/folder/<%=ext.curFolderId%>/create",
             method: "POST",
             data: {"folderName": $('#createFolder_folderName').val(),
                 "parentFolderId": $('#createFolder_parentFolderId').val()}
@@ -315,13 +306,13 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
 
     };
 
-    $scope.preAddPageFunction = function (folderName, folderId) {
+    $scope.preAddPageFunction = function (bookmarkId, folderId) {
 
         // $('#createPageDiv').show();
         $('#createPageModel').modal()
 
-        $('#createPage_folderName').val(folderName);
-        $('#createPage_folderId').val(folderId);
+       // $('#createPage_bookmarkId').val(bookmarkId);
+       // $('#createPage_folderId').val(folderId);
         //$('#pageUrl').focus();
 
         //location.href = '#pageUrl';
@@ -330,9 +321,11 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
     };
     $scope.createPageFunction = function () {
         $http({
-            url: "http://localhost/<%=ext.userId%>/bookmark/<%=ext.parentBookmarkId%>/folder/<%=ext.parentFolderId%>/page/create",
+            url: "http://localhost/<%=ext.userId%>/bookmark/<%=ext.curBookmarkId %>/folder/<%=ext.curFolderId%>/page/create",
             method: "POST",
-            data: {"folderId": $('#createPage_folderId').val(),
+            data: {
+                //"bookmarkId": $('#createPage_bookmarkId').val(),
+               // "folderId": $('#createPage_folderId').val(),
                 "pageUrl": $('#pageUrl').val(),
                 "pageName": $('#pageName').val()
             }
@@ -385,15 +378,15 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
                 "password": $('#login-password').val()}
         }).success(function (data, status, headers, config) {
 
-            if(data == '登录成功'){
+            if (data == '登录成功') {
                 $('#loginModel').modal('hide');
                 location.href = 'http://localhost/';
             }
-            else{
+            else {
                 alert(data);
             }
 
-           // alert(data);
+            // alert(data);
 
             //$scope.data = data;
         }).error(function (data, status, headers, config) {
@@ -408,7 +401,7 @@ app.controller("pageMainCtrl", function ($scope, $element, $http) {
             method: "POST",
             data: { }
         }).success(function (data, status, headers, config) {
-           // $('#loginModel').modal('hide');
+            // $('#loginModel').modal('hide');
             alert(data);
             location.href = 'http://localhost/';
             //$scope.data = data;
